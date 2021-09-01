@@ -1,6 +1,6 @@
-# EngagED-FrontendPropject (desafiofront-engaged)
+# EngagED-RickAndMorty (engaged-rickandmorty)
 
-Rick and Morty API
+Rick and Morty project
 
 ## Install the dependencies
 ```bash

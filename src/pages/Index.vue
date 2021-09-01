@@ -1,49 +1,70 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <example-component
-      title="Example component"
-      active
-      :todos="todos"
-      :meta="meta"
-    ></example-component>
+  <q-page class="flex flex-center">
+    <q-card class="CharacterCard flex flex-center" v-for='character in characters' v-bind:key="character.id">
+      <q-btn class="flex justify-between">
+        <q-card-section horizontal width='350px'>
+          <q-card-section >
+            <div class="text-h5">{{character.name}}</div>
+            <div class='text-subtitle2'><span></span>{{character.status}} - {{character.species}}</div>
+          </q-card-section>
+
+          <q-img
+            class="col-5"
+            :src= 'character.image'
+            ratio="1"
+            width="300px"
+          />
+        </q-card-section>
+      </q-btn>
+    </q-card>
   </q-page>
 </template>
 
-<script lang="ts">
-import { Todo, Meta } from 'components/models';
-import ExampleComponent from 'components/CompositionComponent.vue';
-import { defineComponent, ref } from 'vue';
+<script>
+import axios from 'axios'
 
-export default defineComponent({
+export default {
   name: 'PageIndex',
-  components: { ExampleComponent },
-  setup() {
-    const todos = ref<Todo[]>([
-      {
-        id: 1,
-        content: 'ct1'
-      },
-      {
-        id: 2,
-        content: 'ct2'
-      },
-      {
-        id: 3,
-        content: 'ct3'
-      },
-      {
-        id: 4,
-        content: 'ct4'
-      },
-      {
-        id: 5,
-        content: 'ct5'
-      }
-    ]);
-    const meta = ref<Meta>({
-      totalCount: 1200
-    });
-    return { todos, meta };
+
+  data () {
+    return {
+      characters: []
+    }
+  },
+
+  async mounted () {
+    try {
+      const result = await axios({
+        method: 'post',
+        url: 'https://rickandmortyapi.com/graphql',
+        data: {
+          query: `
+          {
+            characters {
+              results{
+                id
+                name
+                status
+                species
+                image
+              }
+            }
+          }`
+        }
+      })
+      this.characters = result.data.data.characters.results
+    } catch (error) {
+      console.log(error)
+    }
   }
-});
+}
 </script>
+
+<style lang:sass scoped>
+  .CharacterCard {
+    width: 35%;
+    margin: 2rem;
+    /* display: flex;
+    justify-content: space-between; */
+  }
+</style>
